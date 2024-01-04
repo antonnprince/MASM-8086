@@ -58,7 +58,7 @@ DISPLAY PROC
               MOV    AL,BL
               ADD    AL,48
               CALL   PRINT
-              JMP    END
+              JMP    ENDD
       
       TWO:    
               MOV    BH,10
@@ -76,7 +76,7 @@ DISPLAY PROC
               ADD    AL,48
               CALL   PRINT
 
-      END:    
+      ENDD:   
               RET
               ENDP
       
@@ -89,8 +89,7 @@ DISPLAY PROC
 
               CALL   INPUT
               ADD    BL,CL
-              CALL   PRINT
-
+              CALL   DISPLAY
       STOP:   
               MOV    AX,4C00H
               INT    21H
