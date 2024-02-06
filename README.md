@@ -1,0 +1,1 @@
+This repository contains a few sample programs for 8086 MASM. I've used Visual Studio Code as the environment to develop the code. With the help of few extensions, we can run assembly language programs in VS Code without installing DOSBOX.
