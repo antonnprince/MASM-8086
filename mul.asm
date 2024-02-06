@@ -1,98 +1,90 @@
-DATA SEGMENT
+data SEGMENT
+data ends
 
-DATA ENDS
+code segment
 
+            assume cs:code,ds:data
 
-CODE SEGMENT
-             ASSUME CS:CODE,DS:DATA
+print proc
+            mov    dl,al
+            mov    ah,02h
+            int    21h
+            ret
+print endp
 
-PRINT PROC:
-             MOV    DL,AL
-             MOV    AH,02H
-             INT    21H
-             RET
-PRINT ENDP
+input proc
+            MOV    AL,01H
+            INT    21H
+            MOV    BL,AL              ;STORE ALL 2 NUMBERS
 
-INPUT PROC
-             MOV    AL,01H
-             INT    21H
-             MOV    BL,AL              ;STORE ALL 2 NUMBERS
+            MOV    AL,01H
+            INT    21H
+            MOV    BH,AL              ;STORE ALL 2 NUMBERS
 
-             MOV    AL,01H
-             INT    21H
-             MOV    BH,AL              ;STORE ALL 2 NUMBERS
+            MOV    AL,01H
+            INT    21H
+            MOV    CL,AL              ;STORE ALL 2 NUMBERS
 
-             MOV    AL,01H
-             INT    21H
-             MOV    CL,AL              ;STORE ALL 2 NUMBERS
+            MOV    AL,01H
+            INT    21H
+            MOV    CH,AL
+            SUB    BL,48
+            SUB    BH,48
+            SUB    CL,48
+            SUB    CH,48
 
-             MOV    AL,01H
-             INT    21H
-             MOV    CH,AL              ;STORE ALL 2 NUMBERS
+            MOV    AH,0
+            MOV    AL,10
+            MUL    BL
+            MOV    BL,AL
+            ADD    BL,BH
 
-             SUB    BL,48
-             SUB    BH,48
-             SUB    CL,48
-             SUB    CH,48
-
-             MOV    AH,0
-             MOV    AL,10
-             MUL    BL
-             MOV    BL,AL
-             ADD    BL,BH
-
-             MOV    AL,10
-             MUL    CL
-             MOV    CL,AL
-
-             RET
+            MOV    AL,10
+            MUL    CL
+            MOV    CL,AL
+            add    cl,ch
+            RET
 INPUT ENDP
 
-DISPLAYY PROC
-             MOV    CX,9
-             CMP    CX,BX
-             JC     TWO
+display proc
+            mov    cx,9
+            cmp    cx,bx
+            jc     two
 
-    ONE:     MOV    AX,BX
-             ADD    AX,48
-             CALL   PRINT
-             JMP    END
-    
-    TWO:     MOV    CL,10              ;8 BIT NUMBER
-             MOV    AX,BX
-             DIV    CL
-		
-		
-             MOV    CH,AH
-             SUB    AH,AH
-             MOV    BX,AX
-		
-             PUSH   CX
-             CALL   DISPLAY
-             POP    CX
-		
-             MOV    AL,CH
-             ADD    AL,48
-             CALL   PRINT
-		
-    
-    END:     
-             RET
-DISPLAYY ENDP
+    one:    
+            mov    bx,ax
+            add    ax,48
+            call   print
+            jmp    endd
+
+    two:    
+            mov    cl,10
+            mov    ax,bx
+            div    cl
+
+            mov    bx,ax
+            add    al,48
+            call   print
+            add    bh,48
+            mov    al,bh
+            call   print
 
 
-    START:   
-             CALL   INPUT
+    endd:   
+            ret
+display endp
+    start:  
+            mov    ax,data
+            mov    ds,ax
+            call   input
+            mov    al,bl
+            mul    cl
+            mov    bx,ax
+            call   display
 
-             MOV    BL,AL
-             MUL    CL
-             MOV    BX,AX
-          
-             CALL   DISPLAYY
+            mov    ax,4C00H
+            int    21H
+              
 
-    STOP:    
-             MOV    AX,4C00H
-             INT    21H
-CODE ENDS
-
-END START
+code ends
+end start

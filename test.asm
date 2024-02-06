@@ -1,93 +1,90 @@
-DATA SEGMENT
-DATA ENDS
+data SEGMENT
+data ends
 
-CODE SEGMENT
-            ASSUME CS:CODE,DS:DATA
+code segment
 
+              assume cs:code,ds:data
 
-PRINT PROC
-            MOV    DL,AL
-            MOV    AH,02H
-            INT    21H
-            RET
-PRINT ENDP
+print proc
+              mov    dl,al
+              mov    ah,02h
+              int    21h
+              ret
+print endp
 
-INPUT PROC
+input proc
+              MOV    AL,01H
+              INT    21H
+              MOV    BL,AL                ;STORE ALL 2 NUMBERS
 
-            MOV    AH,01H
-            INT    21H
-            MOV    BL,AL
+              MOV    AL,01H
+              INT    21H
+              MOV    BH,AL                ;STORE ALL 2 NUMBERS
 
-            MOV    AH,01H
-            INT    21H
-            MOV    BH,AL
+              MOV    AL,01H
+              INT    21H
+              MOV    CL,AL                ;STORE ALL 2 NUMBERS
 
-            MOV    AH,01H
-            INT    21H
-            MOV    CL,AL
+              MOV    AL,01H
+              INT    21H
+              MOV    CH,AL
+              SUB    BL,48
+              SUB    BH,48
+              SUB    CL,48
+              SUB    CH,48
 
-            MOV    AH,01H
-            INT    21H
-            MOV    CH,AL
+              MOV    AH,0
+              MOV    AL,10
+              MUL    BL
+              MOV    BL,AL
+              ADD    BL,BH
 
-            SUB    BL,48
-            SUB    BH,48
-            SUB    CL,48
-            SUB    CH,48
-
-            MOV    AL,10
-            MUL    BL
-            MOV    BL,AL
-            ADD    BL,BH
-
-            MOV    AL,10
-            MUL    CL
-            MOV    CL,AL
-            ADD    CL,AH
-            RET
+              MOV    AL,10
+              MUL    CL
+              MOV    CL,AL
+              add    cl,ch
+              RET
 INPUT ENDP
 
-SHOW PROC
-            MOV    BH,9
-            CMP    BH,BL
-            JC     TWO
+display proc
+              mov    cx,9
+              cmp    cx,bx
+              jc     two
 
-      ONE:  MOV    AL,BL
-            ADD    AL,48
-            CALL   PRINT
-            JMP    ENDD
+      one:    
+              mov    bx,ax
+              add    ax,48
+              call   print
+              jmp    endd
 
-      TWO:  
-            mov    bh,10
-            mov    al,bl
-            sub    ah,ah
-            div    bh
+      two:    
+              mov    cl,10
+              mov    ax,bx
+              div    cl
 
-            mov    bl,al                ;q
-            mov    bh,ah                ;r
+              mov    bx,ax
+              add    al,48
+              call   print
+              add    bh,48
+              mov    al,bh
+              call   print
 
-            add    al,48
-            call   SHOW
-            mov    bh,al
-            add    al,48
-            call   SHOW
 
-      ENDD: 
-            RET
+      endd:   
+              ret
+display endp
+      start:  
+              mov    ax,data
+              mov    ds,ax
+              call   input
+              mov    al,bl
+              mul    cl
+              mov    bx,ax
+              call   display
 
-SHOW ENDP
-      START:
-            MOV    AX,DATA
-            MOV    DS,AX
+              mov    ax,4C00H
+              int    21H
+              
 
-            CALL   INPUT
-
-            ADD    BL,CL
-
-            CALL   SHOW
-
-      STOP: MOV    AX,4C00H
-            INT    21H
-CODE ENDS
-END START
-      
+code ends
+end start
