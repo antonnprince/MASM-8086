@@ -48,32 +48,27 @@ INPUT PROC
 INPUT ENDP
 
 SHOW PROC
-      ;sub    bh,ch
-            MOV    BH,9
-            CMP    BH,BL
-            JC     TWO
+            mov    bh,9
+            cmp    bh,bl
+            jc     two
+      
+      one:  add    bl,48
+            call   print
+            jmp    endd
 
-      ONE:  MOV    AL,BL
-            ADD    AL,48
-            CALL   PRINT
-            JMP    ENDD
-
-      TWO:  
-            mov    bh,10
+      two:  sub    ah,ah
             mov    al,bl
-            sub    ah,ah
+            mov    bh,10
             div    bh
 
-            mov    bh,AH                ;q
-            mov    bl,al                ;r
-
+            mov    bl,al                ;q
+            mov    bh,ah
             add    al,48
             call   print
-            add    ah,48
-            call   print
-
-      ENDD: 
-            RET
+            mov    al,ah
+            add    al,48
+            call   print                ;r
+      endd: ret
 
 SHOW ENDP
       START:

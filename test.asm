@@ -1,90 +1,61 @@
-data SEGMENT
+.model small
+.stack 100h
+
+data segment
+      msg1 db 10,13,"Enter string1: ","$",
+      msg2 db 10,13,"Enter string2: ","$",
+      str1 db 8,?,8 dup("$")
 data ends
 
 code segment
+             assume cs:code,ds:data
 
-              assume cs:code,ds:data
+      start: 
+             mov    ax,data
+             mov    ds,ax
 
-print proc
-              mov    dl,al
-              mov    ah,02h
-              int    21h
-              ret
-print endp
+             mov    dx,offset msg1
+             mov    ah,9
+             int    21h
 
-input proc
-              MOV    AL,01H
-              INT    21H
-              MOV    BL,AL                ;STORE ALL 2 NUMBERS
+             mov    si,0
 
-              MOV    AL,01H
-              INT    21H
-              MOV    BH,AL                ;STORE ALL 2 NUMBERS
+      read:  
+             mov    ah,1h
+             int    21H
+             ret
 
-              MOV    AL,01H
-              INT    21H
-              MOV    CL,AL                ;STORE ALL 2 NUMBERS
+      input1:call   read
+             cmp    al,13
+             je     inp
+             mov    str1[si],al
+             inc    si
+             jmp    input1
 
-              MOV    AL,01H
-              INT    21H
-              MOV    CH,AL
-              SUB    BL,48
-              SUB    BH,48
-              SUB    CL,48
-              SUB    CH,48
+             
+      
+      inp:   
+             mov    dx,offset msg2
+             mov    ah,9
+             int    21h
 
-              MOV    AH,0
-              MOV    AL,10
-              MUL    BL
-              MOV    BL,AL
-              ADD    BL,BH
+      input2:
+             call   read
+             cmp    al,13
+             je     concat
+             mov    str1[si],al
+             inc    si
+             jmp    input2
 
-              MOV    AL,10
-              MUL    CL
-              MOV    CL,AL
-              add    cl,ch
-              RET
-INPUT ENDP
+      concat:
+             mov    str1[si],"$"
+             mov    dx,offset str1
+             mov    ah,9
+             int    21h
 
-display proc
-              mov    cx,9
-              cmp    cx,bx
-              jc     two
-
-      one:    
-              mov    bx,ax
-              add    ax,48
-              call   print
-              jmp    endd
-
-      two:    
-              mov    cl,10
-              mov    ax,bx
-              div    cl
-
-              mov    bx,ax
-              add    al,48
-              call   print
-              add    bh,48
-              mov    al,bh
-              call   print
-
-
-      endd:   
-              ret
-display endp
-      start:  
-              mov    ax,data
-              mov    ds,ax
-              call   input
-              mov    al,bl
-              mul    cl
-              mov    bx,ax
-              call   display
-
-              mov    ax,4C00H
-              int    21H
-              
-
+      stop:  
+             mov    ax,4c00h
+             int    21h
+             ret
 code ends
 end start
